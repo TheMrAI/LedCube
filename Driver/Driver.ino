@@ -2,6 +2,9 @@
 #include "Tlc5940.h"
 
 int layer_pins[] = {4, 5, 6 ,7};
+const double step_size = (2*PI / 16);
+const double duration = 1000;
+const int maxBrightness = 4095;
 
 void prime_layer(int layer_id)
 {
@@ -13,33 +16,43 @@ void prime_layer(int layer_id)
     }
     else
     {
-      analogWrite(layer_pins[i], 255); // OFF  
+      analogWrite(layer_pins[i], 255); // OFF
     }
   }
 }
 
-void setup() 
+void sine_color(int channel_start, int channel_end, double sine_state)
+{
+  for (int i = channel_start; i < channel_end; ++i)
+  {
+    int brightness = (sin(sine_state + i*step_size)+1) * (maxBrightness/2);
+    Tlc.set(i, brightness);
+  }
+}
+
+void sine_wave(double sine_state)
+{
+  for (int layer = 0; layer < 4; ++layer)
+  {
+    prime_layer(layer);
+    sine_color(0, 16, sine_state);
+    sine_color(16, 32, sine_state + PI/3);
+    sine_color(32, 48, sine_state + 2*PI/3);
+    Tlc.update();
+  }
+}
+
+void setup()
 {
   Tlc.init();
 }
 
-void loop() 
+void loop()
 {
-  int maxBrightness = 2047; // 4095
-  int duration = 1000;
-  double step_size = (2*PI / 16);
   for (double sine_state = 0.0; sine_state < 2*PI; sine_state += step_size)
   {
-    for (int layer = 0; layer < 4; ++layer)
-    {
-      prime_layer(layer);
-      for (int i = 0; i < 16; ++i)
-      {
-        int brightness = (sin(sine_state + i*step_size)+1) * (maxBrightness/2);
-        Tlc.set(i, brightness);
-      }
-      Tlc.update();
-    }
-    delay(duration / 16);
+      //double sine_shift = color * (2*PI / 3.0);
+      sine_wave(sine_state);
+      delay(duration / 16);
   }
 }
