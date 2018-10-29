@@ -3,7 +3,7 @@
 
 int layer_pins[] = {4, 5, 6 ,7};
 const double step_size = (2*PI / 16);
-const double duration = 1000;
+const double duration = 5000;
 const int maxBrightness = 4095;
 
 void prime_layer(int layer_id)
@@ -25,14 +25,14 @@ void sine_color(int channel_start, int channel_end, double sine_state)
 {
   for (int i = channel_start; i < channel_end; ++i)
   {
-    int brightness = (sin(sine_state + i*step_size)+1) * (maxBrightness/2);
+    int brightness = (sin(sine_state + i*step_size)+1) * (maxBrightness);
     Tlc.set(i, brightness);
   }
 }
 
 void sine_wave(double sine_state)
 {
-  for (int layer = 0; layer < 4; ++layer)
+  for (int layer = 0; layer < 3; ++layer)
   {
     prime_layer(layer);
     sine_color(0, 16, sine_state);
@@ -49,10 +49,18 @@ void setup()
 
 void loop()
 {
-  for (double sine_state = 0.0; sine_state < 2*PI; sine_state += step_size)
+  int actual_time = millis();
+  int previous_time = millis();
+  double sine_step = 2*PI / duration;
+  double sine_prev_state = 0.0;
+  double sine_actual_state = 0.0;
+  while(true)
   {
-      //double sine_shift = color * (2*PI / 3.0);
-      sine_wave(sine_state);
-      delay(duration / 16);
+    actual_time = millis();
+    double delta_time = actual_time - previous_time;
+    sine_actual_state = sine_prev_state + sine_step*delta_time;
+    sine_wave(sine_actual_state);
+    previous_time = actual_time;
+    sine_prev_state = sine_actual_state;
   }
 }
