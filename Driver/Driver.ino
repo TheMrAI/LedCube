@@ -1,6 +1,7 @@
 #include "math.h"
 #include "Tlc5940.h"
 #include "sine_wave.h"
+#include "tester.h"
 
 const double duration = 5000;
 
@@ -11,6 +12,8 @@ void setup()
 
 void loop()
 {
-  Sinewave sinewave{1, 3};
-  sinewave.simulate(duration);
+//  Sinewave sinewave{1, 3};
+//  sinewave.simulate(duration);
+  ColorCycler cycler{};
+  cycler.simulate(duration);
 }

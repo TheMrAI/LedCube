@@ -8,15 +8,15 @@ Sinewave::Sinewave(int start_layer=0, int end_layer, double max_brightness): sta
 
 void Sinewave::simulate(double duration)
 {
-  int actual_time = millis();
-  int previous_time = millis();
+  unsigned long actual_time = millis();
+  unsigned long previous_time = millis();
   double sine_step = 2*PI / duration;
   double sine_prev_state = 0.0;
   double sine_actual_state = 0.0;
   while(true)
   {
     actual_time = millis();
-    double delta_time = actual_time - previous_time;
+    unsigned long delta_time = actual_time - previous_time;
     sine_actual_state = sine_prev_state + sine_step*delta_time;
     wave(sine_actual_state);
     previous_time = actual_time;
