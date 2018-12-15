@@ -1,8 +1,27 @@
+#ifndef __COMMON_HEADER__
+#define __COMMON_HEADER__
+
 namespace common 
 {
-  const int layer_count = 4;
-  const int layer_pins[layer_count] = {4, 5, 6 ,7};
-  const int maxBrightness = 4095;
+  class Config
+  {
+    public:
+      const int layer_count;
+      const int* layer_pins;
+      const int min_brightness;
+      const int max_brightness;
+      const int left_button;
+      const int right_button;
+      const int speed_pot;
+      const int bright_pot;
 
-  void prime_layer(int layer_id);
+      Config(const int layer_count, const int* layer_pins, const int min_brightness, const int max_brightness, const int left_button, const int right_button, const int speed_pot,
+      const int bright_pot);
+  };
+
+  void prime_layer(const int layer_id, const int layer_count, const int* layer_pins);
+
+  long read_pot(const int pot_pin, const long min_value, const long max_value);
 }
+
+#endif //__COMMON_HEADER__
